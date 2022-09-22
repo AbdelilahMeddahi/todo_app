@@ -18,6 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void saveNewTask(){
     setState(() {
       toDoList.add([_controller.text,false]);
+      _controller.clear();
     });
     Navigator.of(context).pop();
   }
@@ -47,6 +48,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  //delete ToDo method
+  void deleteToDo(int index){
+    setState(() {
+      toDoList.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
             taskName: toDoList[index][0],
             taskCompleted: toDoList[index][1],
             onChanged: (value) => checkBoxTap(value, index),
+            deleteToDo: (context) => deleteToDo(index),
           );
         },
       ),
