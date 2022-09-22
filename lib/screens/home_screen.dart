@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/utils/dialog_box.dart';
 import 'package:todo_app/utils/todo_tile.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -9,6 +10,18 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  // text controller
+  final _controller = TextEditingController();
+
+  //save new task method
+  void saveNewTask(){
+    setState(() {
+      toDoList.add([_controller.text,false]);
+    });
+    Navigator.of(context).pop();
+  }
+
   List toDoList = [
     ["Hello", true],
     ["Hey", false],
@@ -22,23 +35,38 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  //create a new ToDo method
+  void createNewToDo() {
+    showDialog(
+      context: context,
+      builder: (context) => DialogBox(
+        controller: _controller,
+        onCancel: (){Navigator.of(context).pop();},
+        onSave: saveNewTask,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.yellow[200],
       appBar: AppBar(
-        title: Text("ToDO"),
+        title: const Text("ToDO"),
         elevation: 1,
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {},
+        child: const Icon(Icons.add),
+        onPressed: createNewToDo,
       ),
       body: ListView.builder(
         itemCount: toDoList.length,
         itemBuilder: (context, index) {
-          return ToDoTile(taskName: toDoList[index][0],
+          return ToDoTile(
+            taskName: toDoList[index][0],
             taskCompleted: toDoList[index][1],
-            onChanged: (value) => checkBoxTap(value,index),);
+            onChanged: (value) => checkBoxTap(value, index),
+          );
         },
       ),
     );
