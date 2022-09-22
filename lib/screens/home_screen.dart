@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:todo_app/data/database.dart';
+
 import 'package:todo_app/utils/dialog_box.dart';
 import 'package:todo_app/utils/todo_tile.dart';
 
@@ -10,30 +13,42 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  //reference our box
+  final _myBox = Hive.box("myBox");
+  ToDoDatabase db = ToDoDatabase();
 
+  @override
+  void initState() {
+    //check if this is the first time ever time opening
+    if(_myBox.get("TODOLIST") == null){
+      db.createInitialData();
+    } else {
+      //this is not the first time lunching the app
+      db.loadData();
+    }
+
+    super.initState();
+  }
   // text controller
   final _controller = TextEditingController();
 
   //save new task method
   void saveNewTask(){
     setState(() {
-      toDoList.add([_controller.text,false]);
+      db.toDoList.add([_controller.text,false]);
       _controller.clear();
     });
+    db.updateDataBase();
     Navigator.of(context).pop();
   }
 
-  List toDoList = [
-    ["Hello", true],
-    ["Hey", false],
-    ["Hi", false],
-  ];
 
   //checkbox method (on tap)
   void checkBoxTap(bool? value, int index) {
     setState(() {
-      toDoList[index][1] = !toDoList[index][1];
+      db.toDoList[index][1] = !db.toDoList[index][1];
     });
+    db.updateDataBase();
   }
 
   //create a new ToDo method
@@ -51,8 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
   //delete ToDo method
   void deleteToDo(int index){
     setState(() {
-      toDoList.removeAt(index);
+      db.toDoList.removeAt(index);
     });
+    db.updateDataBase();
   }
 
   @override
@@ -68,11 +84,11 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: createNewToDo,
       ),
       body: ListView.builder(
-        itemCount: toDoList.length,
+        itemCount: db.toDoList.length,
         itemBuilder: (context, index) {
           return ToDoTile(
-            taskName: toDoList[index][0],
-            taskCompleted: toDoList[index][1],
+            taskName: db.toDoList[index][0],
+            taskCompleted: db.toDoList[index][1],
             onChanged: (value) => checkBoxTap(value, index),
             deleteToDo: (context) => deleteToDo(index),
           );
