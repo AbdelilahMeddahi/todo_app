@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     db.updateDataBase();
   }
 
-  //create a new ToDo method
+  //create a new todo
   void createNewToDo() {
     showDialog(
       context: context,
@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  //delete ToDo method
+  //delete existing todo
   void deleteToDo(int index){
     setState(() {
       db.toDoList.removeAt(index);
@@ -74,12 +74,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.yellow[200],
+      backgroundColor: Color(0xFFFFCACA),
       appBar: AppBar(
-        title: const Text("ToDO"),
+        backgroundColor: Color(0xFF372948),
+        title: Center(child: const Text("Flutter ToDo App",textAlign: TextAlign.center)),
         elevation: 1,
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Color(0xFF372948),
         child: const Icon(Icons.add),
         onPressed: createNewToDo,
       ),
